@@ -8,8 +8,6 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 public interface UserRepo extends R2dbcRepository<UserEntity, Long> {
     Mono<UserEntity> findByLogin(String login);
 

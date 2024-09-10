@@ -1,6 +1,5 @@
 package com.github.AlexeyHved.jwtauthserver.entity;
 
-import com.github.AlexeyHved.jwtauthserver.domain.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

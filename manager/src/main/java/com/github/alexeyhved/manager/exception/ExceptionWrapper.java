@@ -2,7 +2,6 @@ package com.github.alexeyhved.manager.exception;
 
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 
 @AllArgsConstructor

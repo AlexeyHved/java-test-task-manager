@@ -1,6 +1,5 @@
 package com.github.AlexeyHved.jwtauthserver.service;
 
-import com.github.AlexeyHved.jwtauthserver.domain.User;
 import com.github.AlexeyHved.jwtauthserver.entity.RoleEntity;
 import com.github.AlexeyHved.jwtauthserver.entity.UserEntity;
 import io.jsonwebtoken.*;
