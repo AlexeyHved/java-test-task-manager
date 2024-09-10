@@ -6,8 +6,8 @@ Task manager app, based on reactive stack with spring security JWT authorization
 4) And now you can use [other endpoints](http://localhost:8080/swagger-ui) with swagger ui
 5) You can use json file from "postman" folder for other tests
 
-!Auth server database diagram
+Auth server database diagram
 ![](https://github.com/AlexeyHved/java-test-task-manager/blob/main/jwt-auth-server/jwtserver-diagram.png)
 
-!Manager database diagram
+Manager database diagram
 ![](https://github.com/AlexeyHved/java-test-task-manager/blob/main/manager/managerdb-diagram.png)
