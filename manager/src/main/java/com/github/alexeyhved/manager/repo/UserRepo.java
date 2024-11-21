@@ -1,6 +1,5 @@
 package com.github.alexeyhved.manager.repo;
 
-import com.github.alexeyhved.manager.dto.UserAdmin;
 import com.github.alexeyhved.manager.dto.UserExecutor;
 import com.github.alexeyhved.manager.entity.UserEntity;
 import org.springframework.data.r2dbc.repository.Query;
