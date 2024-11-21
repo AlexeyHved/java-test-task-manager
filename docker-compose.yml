@@ -28,7 +28,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - jwt-postgresql-data:/var/lib/postgresql/data/
     ports:
-      - "5433:5432"
+      - "6433:5432"
     environment:
       - POSTGRES_DB=jwtserver
       - POSTGRES_USER=jwtserveradmin
@@ -63,7 +63,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - manager-postgresql-data:/var/lib/postgresql/data/
     ports:
-      - "5434:5432"
+      - "6434:5432"
     environment:
       - POSTGRES_DB=managerdb
       - POSTGRES_USER=managerdbadmin

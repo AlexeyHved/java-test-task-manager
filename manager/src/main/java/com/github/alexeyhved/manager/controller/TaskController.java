@@ -43,7 +43,7 @@ public class TaskController {
                 .flatMap(token -> jwtProvider
                         .validateAccessToken(token)
                         .then(jwtProvider.getUserIdFromToken(token))
-                        .flatMap(userService::findAuthorUserById)
+                        .flatMap(userService::findAdminById)
                         .flatMap(userAuthor -> taskService.createTask(taskRequest, userAuthor)))
                 .log();
         return new ResponseEntity<>(taskResponseMono, HttpStatus.CREATED);
@@ -58,6 +58,32 @@ public class TaskController {
         Mono<TaskResponse> taskResponseMono = jwtProvider.getTokenFromBearer(bearer)
                 .map(jwtProvider::validateAccessToken)
                 .then(taskService.findTaskById(taskId))
+                .log();
+        return new ResponseEntity<>(taskResponseMono, HttpStatus.OK);
+    }
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Find tasks by executor")
+    @GetMapping(value = "/executors/{executorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Flux<TaskResponse>> getTasksByExecutor(@Parameter(hidden = true) @RequestHeader(AUTHORIZATION) String bearer,
+                                                      @PathVariable @Positive Long executorId) {
+
+        Flux<TaskResponse> taskResponseMono = jwtProvider.getTokenFromBearer(bearer)
+                .map(jwtProvider::validateAccessToken)
+                .thenMany(taskService.findTasksByExecutor(executorId))
+                .log();
+        return new ResponseEntity<>(taskResponseMono, HttpStatus.OK);
+    }
+
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Find tasks by author")
+    @GetMapping(value = "/authors/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Flux<TaskResponse>> getTasksByAuthor(@Parameter(hidden = true) @RequestHeader(AUTHORIZATION) String bearer,
+                                                                 @PathVariable @Positive Long authorId) {
+
+        Flux<TaskResponse> taskResponseMono = jwtProvider.getTokenFromBearer(bearer)
+                .map(jwtProvider::validateAccessToken)
+                .thenMany(taskService.findTasksByAuthor(authorId))
                 .log();
         return new ResponseEntity<>(taskResponseMono, HttpStatus.OK);
     }

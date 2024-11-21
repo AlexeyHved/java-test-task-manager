@@ -1,7 +1,8 @@
 package com.github.alexeyhved.manager.service;
 
-import com.github.alexeyhved.manager.dto.UserAuthor;
+import com.github.alexeyhved.manager.dto.UserAdmin;
 import com.github.alexeyhved.manager.dto.UserExecutor;
+import com.github.alexeyhved.manager.entity.Role;
 import com.github.alexeyhved.manager.entity.UserEntity;
 import com.github.alexeyhved.manager.exception.ResourceNotFoundException;
 import com.github.alexeyhved.manager.repo.UserRepo;
@@ -16,25 +17,39 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
 
     @Override
-    public Mono<UserAuthor> createUser(Long id, String login) {
-            UserEntity userEntity = new UserEntity();
-            userEntity.setId(id);
-            userEntity.setLogin(login);
+    public Mono<UserAdmin> createAdmin(Long id, String login) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(id);
+        userEntity.setLogin(login);
+        userEntity.setRole(Role.ADMIN);
 
         return userRepo.save(userEntity)
                 .switchIfEmpty(Mono.error(new RuntimeException("Error on create user")))
-                .map(Mapper::toUserAuthor);
+                .map(Mapper::toUserAdmin);
     }
 
+    @Override
+    public Mono<UserAdmin> createUser(Long id, String login) {
+            UserEntity userEntity = new UserEntity();
+            userEntity.setId(id);
+            userEntity.setLogin(login);
+            userEntity.setRole(Role.USER);
+
+        return userRepo.save(userEntity)
+                .switchIfEmpty(Mono.error(new RuntimeException("Error on create user")))
+                .map(Mapper::toUserAdmin);
+    }
+
+    @Override
     public Mono<Void> deleteUserById(Long userId) {
         return userRepo.deleteById(userId);
     }
 
     @Override
-    public Mono<UserAuthor> findAuthorUserById(Long userId) {
-        return userRepo.findById(userId)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("User by id not found")))
-                .map(Mapper::toUserAuthor);
+    public Mono<UserAdmin> findAdminById(Long userId) {
+        return userRepo.findAdminById(userId)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Admin by id not found")))
+                .map(Mapper::toUserAdmin);
     }
 
     @Override
@@ -45,9 +60,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserAuthor> findAuthorByTaskIdAndUserId(Long taskId, Long userId) {
+    public Mono<UserAdmin> findAuthorByTaskIdAndUserId(Long taskId, Long userId) {
         return userRepo.findAuthorByTaskId(taskId, userId)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("Author or task not found")))
-                .map(Mapper::toUserAuthor);
+                .map(Mapper::toUserAdmin);
     }
 }

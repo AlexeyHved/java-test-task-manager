@@ -15,15 +15,15 @@ public class Mapper {
         return new CommentResponse(commentEntity.getAuthorId(), commentEntity.getTaskId(), commentEntity.getContent());
     }
 
-    public static UserAuthor toUserAuthor(UserEntity userEntity) {
-        return new UserAuthor(userEntity.getId(), userEntity.getLogin());
+    public static UserAdmin toUserAdmin(UserEntity userEntity) {
+        return new UserAdmin(userEntity.getId(), userEntity.getLogin(), userEntity.getRole());
     }
 
     public static UserExecutor toUserExecutor(UserEntity userEntity) {
-        return new UserExecutor(userEntity.getId(), userEntity.getLogin());
+        return new UserExecutor(userEntity.getId(), userEntity.getLogin(), userEntity.getRole());
     }
 
-    public static TaskResponse toTaskResponse(TaskEntity taskEntity, UserAuthor author) {
+    public static TaskResponse toTaskResponse(TaskEntity taskEntity, UserAdmin author) {
         return TaskResponse.builder()
                 .id(taskEntity.getId())
                 .title(taskEntity.getTitle())
@@ -37,7 +37,7 @@ public class Mapper {
     }
 
     public static TaskResponse toTaskResponse(TaskEntity taskEntity,
-                                              UserAuthor author,
+                                              UserAdmin author,
                                               List<UserExecutor> executorsList,
                                               List<CommentResponse> comments) {
         return TaskResponse.builder()

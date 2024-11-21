@@ -14,8 +14,6 @@ public interface TaskRepo extends R2dbcRepository<TaskEntity, Long> {
     @Query("insert into executors_tasks (executor_id, task_id) values (:executorId, :taskId)")
     Mono<Void> addLinkToExecutorsTasks(Long executorId, Long taskId);
 
-    Mono<Integer> countTaskEntitiesById(Long taskId);
-
     Mono<TaskEntity> findByIdAndAuthorId(Long taskId, Long authorId);
 
     @Query("select t.* from tasks t " +
@@ -25,5 +23,10 @@ public interface TaskRepo extends R2dbcRepository<TaskEntity, Long> {
 
     Flux<TaskEntity> findAllBy(Pageable pageable);
 
-    Mono<Boolean> deleteByIdAndAuthorId(Long taskId, Long authorId);
+    @Query("select t.* from tasks t " +
+            "join public.executors_tasks et on t.id = et.task_id " +
+            "where et.executor_id = :executorId")
+    Flux<TaskEntity> findByExecutorId(Long executorId);
+
+    Flux<TaskEntity> findByAuthorId(Long authorId);
 }

@@ -1,7 +1,10 @@
 package com.github.alexeyhved.manager.service;
 
 import com.github.alexeyhved.manager.dto.*;
+import com.github.alexeyhved.manager.entity.Priority;
+import com.github.alexeyhved.manager.entity.Status;
 import com.github.alexeyhved.manager.entity.TaskEntity;
+import com.github.alexeyhved.manager.entity.UserEntity;
 import com.github.alexeyhved.manager.exception.ResourceNotFoundException;
 import com.github.alexeyhved.manager.repo.CommentRepo;
 import com.github.alexeyhved.manager.repo.TaskRepo;
@@ -28,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Mono<TaskResponse> createTask(TaskRequest taskRequest, UserAuthor author) {
+    public Mono<TaskResponse> createTask(TaskRequest taskRequest, UserAdmin author) {
         TaskEntity taskEntity = new TaskEntity(
                 null,
                 author.getId(),
@@ -45,7 +48,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Mono<TaskResponse> addExecutor(Long taskId, UserAuthor userAuthor, UserExecutor userExecutor) {
+    public Mono<TaskResponse> addExecutor(Long taskId, UserAdmin userAdmin, UserExecutor userExecutor) {
         Mono<List<CommentResponse>> commentsMonoList = commentRepo.findByTaskId(taskId)
                 .map(Mapper::toCommentResp)
                 .collectList();
@@ -56,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
                         .addLinkToExecutorsTasks(userExecutor.getId(), taskEntity.getId())
                         .then(userRepo.findExecutorsByTaskId(taskId).collectList())
                         .flatMap(userExecutors -> commentsMonoList
-                                .map(commentsList -> Mapper.toTaskResponse(taskEntity, userAuthor, userExecutors, commentsList))));
+                                .map(commentsList -> Mapper.toTaskResponse(taskEntity, userAdmin, userExecutors, commentsList))));
     }
 
     @Override
@@ -82,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
 
                     return taskRepo.save(taskEntity)
                             .flatMap(savedTaskEntity -> userRepo.findById(savedTaskEntity.getAuthorId())
-                                    .map(Mapper::toUserAuthor)
+                                    .map(Mapper::toUserAdmin)
                                     .flatMap(userAuthor -> userRepo.findExecutorsByTaskId(taskId)
                                             .collectList()
                                             .flatMap(userExecutorsList -> commentsMonoList.map(commentsList -> Mapper
@@ -103,7 +106,7 @@ public class TaskServiceImpl implements TaskService {
         return taskEntityMono
                 .flatMap(taskEntity -> userRepo.findAuthorByTaskId(taskId, taskEntity.getAuthorId())
                         .switchIfEmpty(Mono.error(new ResourceNotFoundException("Task not found")))
-                        .map(Mapper::toUserAuthor)
+                        .map(Mapper::toUserAdmin)
                         .flatMap(userAuthor -> executorsMonoList
                                 .flatMap(executors -> commentsMonoList
                                         .map(comments -> Mapper.toTaskResponse(taskEntity, userAuthor, executors, comments)))));
@@ -115,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
     public Flux<TaskResponse> findAllTasks() {
         return taskRepo.findAll()
                 .flatMap(taskEntity -> userRepo.findAuthorByTaskId(taskEntity.getId(), taskEntity.getAuthorId())
-                        .map(Mapper::toUserAuthor)
+                        .map(Mapper::toUserAdmin)
                         .flatMap(userAuthor -> userRepo
                                 .findExecutorsByTaskId(taskEntity.getId()).collectList()
                                 .flatMap(executors -> commentRepo
@@ -130,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
     public Mono<Page<TaskResponse>> findAllTasksPageable(Pageable pageable) {
         return taskRepo.findAllBy(pageable)
                 .flatMap(taskEntity -> userRepo.findAuthorByTaskId(taskEntity.getId(), taskEntity.getAuthorId())
-                        .map(Mapper::toUserAuthor)
+                        .map(Mapper::toUserAdmin)
                         .flatMap(userAuthor -> userRepo.findExecutorsByTaskId(taskEntity.getId()).collectList()
                                 .flatMap(executors -> commentRepo
                                         .findByTaskId(taskEntity.getId())
@@ -157,7 +160,7 @@ public class TaskServiceImpl implements TaskService {
                 })
                 .flatMap(taskEntity -> userRepo
                         .findById(taskEntity.getAuthorId())
-                        .map(Mapper::toUserAuthor)
+                        .map(Mapper::toUserAdmin)
                         .flatMap(userAuthor -> userRepo
                                 .findExecutorsByTaskId(taskEntity.getId()).collectList()
                                 .flatMap(executors -> commentsMonoList
@@ -166,15 +169,46 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Mono<Void> deleteTaskByIdAndAuthor(Long taskId, Long authorId) {
-        return taskRepo.deleteByIdAndAuthorId(taskId, authorId)
-                .flatMap(isSuccessful -> {
-                    if (!isSuccessful) {
-                        return Mono.error(new ResourceNotFoundException("Task not found"));
-                    } else {
-                        return Mono.empty();
-                    }
-                });
+    public Mono<Void> deleteTaskByIdAndAuthor(Long taskId, Long userId) {
+        Mono<UserEntity> userEntityMono = userRepo.findAdminById(userId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException(String.format("User with id %s not found", userId))));
+
+        Mono<TaskEntity> taskEntityMono = taskRepo.findById(taskId)
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Task not found")));
+
+        return userEntityMono
+                .flatMap(userEntity -> taskEntityMono
+                        .flatMap(taskEntity -> taskRepo.deleteById(taskEntity.getId())));
+    }
+
+    @Override
+    public Flux<TaskResponse> findTasksByExecutor(Long executorId) {
+        return taskRepo.findByExecutorId(executorId)
+                .flatMap(taskEntity -> userRepo.findAuthorByTaskId(taskEntity.getId(), taskEntity.getAuthorId())
+                        .map(Mapper::toUserAdmin)
+                        .flatMap(userAuthor -> userRepo
+                                .findExecutorsByTaskId(taskEntity.getId()).collectList()
+                                .flatMap(executors -> commentRepo
+                                        .findByTaskId(taskEntity.getId())
+                                        .map(Mapper::toCommentResp)
+                                        .collectList()
+                                        .map(comments -> Mapper.toTaskResponse(taskEntity, userAuthor, executors, comments)))));
+
+
+    }
+
+    @Override
+    public Flux<TaskResponse> findTasksByAuthor(Long authorId) {
+        return taskRepo.findByAuthorId(authorId)
+                .flatMap(taskEntity -> userRepo.findAuthorByTaskId(taskEntity.getId(), taskEntity.getAuthorId())
+                        .map(Mapper::toUserAdmin)
+                        .flatMap(userAuthor -> userRepo
+                                .findExecutorsByTaskId(taskEntity.getId()).collectList()
+                                .flatMap(executors -> commentRepo
+                                        .findByTaskId(taskEntity.getId())
+                                        .map(Mapper::toCommentResp)
+                                        .collectList()
+                                        .map(comments -> Mapper.toTaskResponse(taskEntity, userAuthor, executors, comments)))));
     }
 
 }

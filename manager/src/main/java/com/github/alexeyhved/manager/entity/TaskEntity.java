@@ -1,7 +1,5 @@
 package com.github.alexeyhved.manager.entity;
 
-import com.github.alexeyhved.manager.dto.Priority;
-import com.github.alexeyhved.manager.dto.Status;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;

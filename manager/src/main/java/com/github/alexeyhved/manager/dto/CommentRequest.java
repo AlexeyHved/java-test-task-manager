@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentRequest {
     @NotBlank
-    @Size(min = 3, max = 1024)
+    @Size(min = 3, max = 1024, message = "Invalid content")
     private String content;
 }

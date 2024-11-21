@@ -1,6 +1,7 @@
 package com.github.alexeyhved.manager.dto;
 
 
+import com.github.alexeyhved.manager.entity.Priority;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,10 +12,10 @@ import lombok.*;
 @Setter
 public class TaskRequest {
     @NotBlank(message = "Must be not blank")
-    @Size(min = 2, max = 20)
+    @Size(min = 2, max = 20, message = "Invalid title")
     private String title;
     @NotBlank(message = "Must be not blank")
-    @Size(min = 5, max = 2000)
+    @Size(min = 5, max = 2000, message = "Invalid description")
     private String description;
     @NotNull(message = "Must be not null")
     private Priority priority;

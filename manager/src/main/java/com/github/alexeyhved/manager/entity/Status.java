@@ -1,4 +1,4 @@
-package com.github.alexeyhved.manager.dto;
+package com.github.alexeyhved.manager.entity;
 
 import reactor.core.publisher.Mono;
 

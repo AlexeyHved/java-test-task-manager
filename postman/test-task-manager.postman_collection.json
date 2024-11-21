@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "5a2cb237-f136-4c2a-ae52-0f8ae00583d1",
 		"name": "test-task-manager",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "23155877"
 	},
 	"item": [
@@ -10,7 +10,46 @@
 			"name": "auth",
 			"item": [
 				{
-					"name": "register",
+					"name": "adminregister",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"var accessToken = data.accessToken;",
+									"var refreshToken = data.refreshToken;",
+									"pm.collectionVariables.set(\"adminAccessToken\", accessToken);",
+									"pm.collectionVariables.set(\"adminRefreshToken\", refreshToken);",
+									"console.log(accessToken, refreshToken);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\":\"validadmin@gmail.com\",\n    \"pass\":\"secretpassword\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/auth/register/admin"
+					},
+					"response": []
+				},
+				{
+					"name": "userregister",
 					"event": [
 						{
 							"listen": "test",
@@ -44,18 +83,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"register"
-							]
-						}
+						"url": "http://localhost:8080/auth/register/user"
 					},
 					"response": []
 				},
@@ -89,18 +117,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"register"
-							]
-						}
+						"url": "http://localhost:8080/auth/register/user"
 					},
 					"response": []
 				},
@@ -114,8 +131,8 @@
 									"var data = pm.response.json();",
 									"var accessToken = data.accessToken;",
 									"var refreshToken = data.refreshToken;",
-									"pm.collectionVariables.set(\"userAccessToken\", accessToken);",
-									"pm.collectionVariables.set(\"userRefreshToken\", refreshToken);",
+									"pm.collectionVariables.set(\"accessToken\", accessToken);",
+									"pm.collectionVariables.set(\"refreshToken\", refreshToken);",
 									"console.log(accessToken, refreshToken);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
@@ -139,18 +156,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"login"
-							]
-						}
+						"url": "http://localhost:8080/auth/login"
 					},
 					"response": []
 				},
@@ -183,18 +189,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"login"
-							]
-						}
+						"url": "http://localhost:8080/auth/login"
 					},
 					"response": []
 				},
@@ -227,18 +222,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"login"
-							]
-						}
+						"url": "http://localhost:8080/auth/login"
 					},
 					"response": []
 				},
@@ -252,8 +236,8 @@
 									"var data = pm.response.json();",
 									"var accessToken = data.accessToken;",
 									"var refreshToken = data.refreshToken;",
-									"pm.collectionVariables.set(\"userAccessToken\", accessToken);",
-									"pm.collectionVariables.set(\"userRefreshToken\", refreshToken);",
+									"pm.collectionVariables.set(\"accessToken\", accessToken);",
+									"pm.collectionVariables.set(\"refreshToken\", refreshToken);",
 									"console.log(accessToken, refreshToken);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
@@ -270,25 +254,53 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"refreshToken\": \"{{userRefreshToken}}\"\n}",
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/token",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"token"
-							]
+						"url": "http://localhost:8080/auth/token"
+					},
+					"response": []
+				},
+				{
+					"name": "update admin Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"var accessToken = data.accessToken;",
+									"var refreshToken = data.refreshToken;",
+									"pm.collectionVariables.set(\"adminAccessToken\", accessToken);",
+									"pm.collectionVariables.set(\"adminRefreshToken\", refreshToken);",
+									"console.log(accessToken, refreshToken);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{adminRefreshToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/auth/token"
 					},
 					"response": []
 				},
@@ -310,26 +322,21 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{accessToken}}"
+							}
+						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
+								"value": "Bearer {{accessToken}}",
 								"type": "text"
 							}
 						],
-						"url": {
-							"raw": "http://localhost:8080/auth/delete",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"delete"
-							]
-						}
+						"url": "http://localhost:8080/auth/delete"
 					},
 					"response": []
 				},
@@ -351,6 +358,12 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{accessToken}}"
+							}
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -362,18 +375,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"login"
-							]
-						}
+						"url": "http://localhost:8080/auth/login"
 					},
 					"response": []
 				}
@@ -382,6 +384,158 @@
 		{
 			"name": "task",
 			"item": [
+				{
+					"name": "admin create task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminAccessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"task title\",\n    \"description\":\"task description\",\n    \"priority\":\"HIGH\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "admin create other task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{adminAccessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"other task title\",\n    \"description\":\"other task description\",\n    \"priority\":\"LOW\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "admin create comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\":\"Comment content\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/tasks/1/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "admin delete comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203, 204]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\":\"Comment content\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/tasks/1/comments/1"
+					},
+					"response": []
+				},
 				{
 					"name": "register user",
 					"event": [
@@ -392,8 +546,8 @@
 									"var data = pm.response.json();",
 									"var accessToken = data.accessToken;",
 									"var refreshToken = data.refreshToken;",
-									"pm.collectionVariables.set(\"userAccessToken\", accessToken);",
-									"pm.collectionVariables.set(\"userRefreshToken\", refreshToken);",
+									"pm.collectionVariables.set(\"accessToken\", accessToken);",
+									"pm.collectionVariables.set(\"refreshToken\", refreshToken);",
 									"console.log(accessToken, refreshToken);",
 									"",
 									"pm.test(\"Status code is 200\", function () {",
@@ -417,78 +571,19 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"register"
-							]
-						}
+						"url": "http://localhost:8080/auth/register/user"
 					},
 					"response": []
 				},
 				{
-					"name": "create task",
+					"name": "user try create task",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\":\"task title\",\n    \"description\":\"task description\",\n    \"priority\":\"HIGH\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/tasks",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create comment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,401,402,403, 404]);",
 									"});"
 								],
 								"type": "text/javascript",
@@ -499,13 +594,47 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{userAccessToken}}",
-									"type": "string"
+							"bearer": {
+								"token": "{{accessToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"task title\",\n    \"description\":\"task description\",\n    \"priority\":\"HIGH\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
+						},
+						"url": "http://localhost:8080/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "user try create comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,401,402,403, 404]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{accessToken}}"
+							}
 						},
 						"method": "POST",
 						"header": [],
@@ -518,19 +647,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/tasks/1/comments",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1",
-								"comments"
-							]
-						}
+						"url": "http://localhost:8080/tasks/1/comments"
 					},
 					"response": []
 				},
@@ -569,71 +686,12 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/auth/register",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"auth",
-								"register"
-							]
-						}
+						"url": "http://localhost:8080/auth/register/user"
 					},
 					"response": []
 				},
 				{
-					"name": "create invalid task",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([400, 500]);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"title\":\"   \",\n    \"description\": null,\n    \"priority\":\"LOW\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/tasks",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "add executor",
+					"name": "admin add executor",
 					"event": [
 						{
 							"listen": "test",
@@ -649,14 +707,126 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
 							}
-						],
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/tasks/1/executors?executor=valid@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tasks",
+								"1",
+								"executors"
+							],
+							"query": [
+								{
+									"key": "executor",
+									"value": "valid@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin add self executor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/tasks/2/executors?executor=validadmin@gmail.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tasks",
+								"2",
+								"executors"
+							],
+							"query": [
+								{
+									"key": "executor",
+									"value": "validadmin@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin add other executor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -689,7 +859,45 @@
 					"response": []
 				},
 				{
-					"name": "update comment",
+					"name": "admin create invalid task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 500]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"   \",\n    \"description\": null,\n    \"priority\":\"LOW\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "executor create comment",
 					"event": [
 						{
 							"listen": "test",
@@ -707,13 +915,47 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{userAccessToken}}",
-									"type": "string"
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\":\"Comment content\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
+						},
+						"url": "http://localhost:8080/tasks/1/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "executor update comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
+							}
 						},
 						"method": "PUT",
 						"header": [],
@@ -726,20 +968,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/tasks/1/comments/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1",
-								"comments",
-								"1"
-							]
-						}
+						"url": "http://localhost:8080/tasks/1/comments/2"
 					},
 					"response": []
 				},
@@ -760,14 +989,14 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{otherUserAccessToken}}",
-								"type": "text"
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
 							}
-						],
+						},
+						"method": "PATCH",
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "",
@@ -777,25 +1006,12 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/tasks/1/executors/PROCESSING",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1",
-								"executors",
-								"PROCESSING"
-							]
-						}
+						"url": "http://localhost:8080/tasks/1/executors/PROCESSING"
 					},
 					"response": []
 				},
 				{
-					"name": "update task",
+					"name": "admin update task",
 					"event": [
 						{
 							"listen": "test",
@@ -811,14 +1027,14 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
 							}
-						],
+						},
+						"method": "PATCH",
+						"header": [],
 						"url": {
 							"raw": "http://localhost:8080/tasks/1/authors?priority=MEDIUM&status=COMPLETED&title=updated ttitle&description=updated description",
 							"protocol": "http",
@@ -854,7 +1070,7 @@
 					"response": []
 				},
 				{
-					"name": "get task",
+					"name": "user get task",
 					"event": [
 						{
 							"listen": "test",
@@ -862,85 +1078,6 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/tasks/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get all tasks",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
-									"});"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/tasks",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete comment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203, 204]);",
 									"});"
 								],
 								"type": "text/javascript",
@@ -951,39 +1088,100 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{userAccessToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"content\":\"Comment content\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/tasks/1/comments/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1",
-								"comments",
-								"1"
-							]
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/tasks/1"
+					},
+					"response": []
+				},
+				{
+					"name": "user get all tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/tasks"
+					},
+					"response": []
+				},
+				{
+					"name": "user get tasks by author",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/tasks/authors/1"
+					},
+					"response": []
+				},
+				{
+					"name": "user get tasks by executor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202,203]);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{otherUserAccessToken}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/tasks/executors/3"
 					},
 					"response": []
 				},
@@ -1004,31 +1202,20 @@
 						}
 					],
 					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
 							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/tasks/pageable",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"pageable"
-							]
-						}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/tasks/pageable"
 					},
 					"response": []
 				},
 				{
-					"name": "delete task",
+					"name": "admin delete task",
 					"event": [
 						{
 							"listen": "test",
@@ -1044,26 +1231,15 @@
 						}
 					],
 					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{userAccessToken}}",
-								"type": "text"
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{adminAccessToken}}"
 							}
-						],
-						"url": {
-							"raw": "http://localhost:8080/tasks/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"tasks",
-								"1"
-							]
-						}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/tasks/1"
 					},
 					"response": []
 				}
@@ -1094,11 +1270,11 @@
 	],
 	"variable": [
 		{
-			"key": "userAccessToken",
+			"key": "adminAccessToken",
 			"value": ""
 		},
 		{
-			"key": "userRefreshToken",
+			"key": "adminRefreshToken",
 			"value": ""
 		},
 		{

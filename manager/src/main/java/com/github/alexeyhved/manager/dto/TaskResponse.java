@@ -1,6 +1,8 @@
 package com.github.alexeyhved.manager.dto;
 
 
+import com.github.alexeyhved.manager.entity.Priority;
+import com.github.alexeyhved.manager.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import java.util.List;
 @Getter
 public class TaskResponse {
     private Long id;
-    private UserAuthor author;
+    private UserAdmin author;
     @Builder.Default
     private List<UserExecutor> executors = Collections.emptyList();
     private String title;

@@ -11,11 +11,11 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 @NoArgsConstructor
 public class JwtRequest {
-    @NotBlank
-    @Length(min = 2)
-    @Email
+    @NotBlank(message = "Invalid login")
+    @Length(min = 2, max = 64, message = "Invalid login")
+    @Email(message = "Not valid email")
     private String login;
-    @NotBlank
-    @Length(min = 4)
+    @NotBlank(message = "Invalid password")
+    @Length(min = 4, max = 64, message = "Invalid password")
     private String pass;
 }

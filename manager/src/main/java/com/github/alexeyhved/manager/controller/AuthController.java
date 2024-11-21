@@ -27,9 +27,21 @@ public class AuthController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
 
+    @Operation(summary = "New admin registration")
+    @PostMapping( value = "/register/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<JwtResponse>> adminRegistration(@Valid @RequestBody JwtRequest request) {
+        return authService.registration(request)
+                .flatMap(jwtResponse -> jwtProvider
+                        .validateAccessToken(jwtResponse.getAccessToken())
+                        .then(jwtProvider.getUserIdFromToken(jwtResponse.getAccessToken()))
+                        .flatMap(userId -> userService.createAdmin(userId, request.getLogin()))
+                        .then(Mono.just(new ResponseEntity<>(jwtResponse, HttpStatus.CREATED)))
+                ).log();
+    }
+
     @Operation(summary = "New user registration")
-    @PostMapping( value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<JwtResponse>> registration(@Valid @RequestBody JwtRequest request) {
+    @PostMapping( value = "/register/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<JwtResponse>> userRegistration(@Valid @RequestBody JwtRequest request) {
         return authService.registration(request)
                 .flatMap(jwtResponse -> jwtProvider
                         .validateAccessToken(jwtResponse.getAccessToken())

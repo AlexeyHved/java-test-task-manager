@@ -6,7 +6,8 @@ drop table if exists users;
 create table if not exists users
 (
     id bigint primary key,
-    login varchar(32) not null unique
+    login varchar(32) not null unique,
+    role varchar(8) not null
 );
 create table if not exists tasks
 (

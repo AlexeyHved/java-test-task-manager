@@ -1,17 +1,19 @@
 package com.github.alexeyhved.manager.service;
 
-import com.github.alexeyhved.manager.dto.UserAuthor;
+import com.github.alexeyhved.manager.dto.UserAdmin;
 import com.github.alexeyhved.manager.dto.UserExecutor;
 import reactor.core.publisher.Mono;
 
 public interface UserService {
-    Mono<UserAuthor> createUser(Long userId, String login);
+    Mono<UserAdmin> createAdmin(Long id, String login);
+
+    Mono<UserAdmin> createUser(Long userId, String login);
 
     Mono<Void> deleteUserById(Long userId);
 
-    Mono<UserAuthor> findAuthorUserById(Long userId);
+    Mono<UserAdmin> findAdminById(Long userId);
 
     Mono<UserExecutor> findExecutorByLogin(String executorLogin);
 
-    Mono<UserAuthor> findAuthorByTaskIdAndUserId(Long taskId, Long userId);
+    Mono<UserAdmin> findAuthorByTaskIdAndUserId(Long taskId, Long userId);
 }

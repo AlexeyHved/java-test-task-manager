@@ -5,7 +5,7 @@ import com.github.alexeyhved.manager.dto.CommentResponse;
 import reactor.core.publisher.Mono;
 
 public interface CommentService {
-    Mono<CommentResponse> create(Long authorId, Long taskId, CommentRequest commentRequest);
+    Mono<CommentResponse> create(Long userId, Long taskId, CommentRequest commentRequest);
 
     Mono<CommentResponse> update(Long authorId, Long taskId, Long commentId, CommentRequest commentRequest);
 

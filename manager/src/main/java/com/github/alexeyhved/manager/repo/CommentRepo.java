@@ -8,7 +8,6 @@ import reactor.core.publisher.Mono;
 public interface CommentRepo extends R2dbcRepository<CommentEntity, Long> {
     Flux<CommentEntity> findByTaskId(Long taskId);
 
-    Mono<CommentEntity> findByIdAndAuthorIdAndTaskId(Long id, Long authorId, Long taskId);
+    Mono<CommentEntity> findByIdAndTaskId(Long id, Long taskId);
 
-    Mono<Boolean> deleteByIdAndAuthorIdAndTaskId(Long id, Long authorId, Long taskId);
 }

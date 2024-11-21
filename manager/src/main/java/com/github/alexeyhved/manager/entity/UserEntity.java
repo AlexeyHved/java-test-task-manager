@@ -16,6 +16,8 @@ public class UserEntity implements Persistable<Long> {
 
     private String login;
 
+    private Role role;
+
     @Transient
     private boolean isNewEntry = true;
 
